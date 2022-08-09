@@ -4,7 +4,7 @@ import requests
 import mysql.connector
 
 mydb2 = mysql.connector.connect(
-  host="172.17.0.2",
+  host="172.17.0.1",
   port=3306,
   user="root",
   password="Ciocanul12@",
@@ -12,7 +12,7 @@ mydb2 = mysql.connector.connect(
 )
 
 mycursor = mydb2.cursor()
-comanda = '''CREATE TABLE AlexandruBeg_players(
+comanda = '''CREATE TABLE city_average(
             city varchar2(255),
             average_salary double,
             number_of_playrs int
