@@ -17,3 +17,5 @@ jobs:
         pip3 install azure-storage-blob
         pip3 install azure
         sudo python3 merge_salary
+    - name : connect to sql
+      run: python3 sql_conn
