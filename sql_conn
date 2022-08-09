@@ -4,12 +4,18 @@
 mydb2 = mysql.connector.connect(
   host="172.17.0.2",
   port=3306,
-  user="MySQLcontainer",
+  user="root",
   password="Ciocanul12@",
   database="academy_ready"
 )
 
 mycursor = mydb2.cursor()
+comanda = '''CREATE TABLE AlexandruBeg_players(
+            city varchar2(255),
+            average_salary double,
+            number_of_playrs int
+            )'''
+mycursor.execute(comanda)
 mycursor.execute("Show Tables")
 r = mycursor.fetchall()
 print(r)
