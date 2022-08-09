@@ -19,3 +19,11 @@ jobs:
         pip3 install azure-storage-blob
         pip3 install azure
         sudo python3 merge_salary
+    - name : ex 4
+      run: |
+        pip3 install pandas
+        sudo python3 -m pip install --upgrade pip
+        pip3 install azure-storage-blob
+        pip3 install azure
+        pip3 install numpy
+        sudo python3 ex4

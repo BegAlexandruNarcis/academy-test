@@ -1,0 +1,98 @@
+#!/usr/bin/python3
+import pandas as pd
+import requests
+import numpy as np
+import mysql.connector
+
+
+mydb = mysql.connector.connect(
+  host="34.163.182.248",
+  port=3306,
+  user="root",
+  password="Ciocanul12@",
+  database="academy"
+)
+
+mycursor = mydb.cursor()
+
+#Tables creations
+comanda = '''CREATE TABLE city_average_beg(
+                city varchar(25),
+                average_salary int,
+                number_of_players int
+            )'''
+mycursor.execute(comanda)
+
+comanda = '''CREATE TABLE players_average_beg(
+                Full_name varchar(25),
+                Above_average_salary int
+            )'''
+mycursor.execute(comanda)
+
+comanda = '''CREATE TABLE LA_salary_beg(
+                Full_name varchar(25),
+                Salary int
+            )'''
+mycursor.execute(comanda)
+
+
+# Exercitiul 4.1
+df_players = pd.read_sql_query('''SELECT * from nba_players''',mydb)
+df_salary = pd.read_sql_query('''SELECT * from nba_salary''',mydb)
+df_savings = pd.read_sql_query('''SELECT * from nba_savings''',mydb)
+
+df = pd.merge(df_savings, df_salary, how='inner', on=['id'])
+df2 = pd.merge(df,df_players, how='inner',  left_index=True, right_index=True)
+
+df3 = df2.groupby(by=['team.city'])['id_x'].count()
+df4 = df2.groupby(by=['team.city'])['Salary'].mean()
+df5 = pd.merge(df3,df4,how='inner', on='team.city')
+df5 = df5.reset_index()
+df5 = df5.rename(columns={"id_x":"Number_of_players","team.city":'city'})
+
+val = []
+for index , row in df5.iterrows():
+    val.append((row.city, row.Salary, row.Number_of_players))
+print(val)
+
+# ADAUGARE DE ELEMENTE IN TABEL
+
+comanda = "INSERT INTO city_average_beg (city,average_salary,Number_of_players) values(%s,%s,%s)"
+mycursor.executemany(comanda, val)
+mydb.commit()
+
+
+
+
+#Exercitiul 4.2
+df2['Full_name'] = df2['first_name']+" "+df2['last_name']
+avg = int(df2['Salary'].mean())
+df2['Above_average'] = np.where(df2['Salary'] > avg, 1,0)
+print(df2)
+
+val = []
+for index , row in df2.iterrows():
+    val.append((row.Full_name, row.Above_average))
+print(val)
+
+# ADAUGARE DE ELEMENTE IN TABEL
+
+comanda = "INSERT INTO players_average_beg (Full_name, Above_average_salary) values(%s,%s)"
+mycursor.executemany(comanda, val)
+mydb.commit()
+
+
+#Exercitiul 4.3
+df2['Full_name'] = df2['first_name']+" "+df2['last_name']
+df33 = df2.loc[df2['team.city'] == 'LA']
+df33 = df33.sort_values(by="Salary",ascending=False)
+
+val = []
+for index , row in df33.iterrows():
+    val.append((row.Full_name, row.Salary))
+
+# ADAUGARE DE ELEMENTE IN TABEL
+
+comanda = "INSERT INTO LA_salary_beg (Full_name, Salary) values(%s,%s)"
+mycursor.executemany(comanda, val)
+mydb.commit()
