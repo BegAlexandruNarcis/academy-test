@@ -11,3 +11,5 @@ mydb2 = mysql.connector.connect(
 
 mycursor = mydb2.cursor()
 mycursor.execute("Show Tables")
+r = mycursor.fetchall()
+print(r)
