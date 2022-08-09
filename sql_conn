@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-
+import pandas as pd
+import requests
+import mysql.connector
 
 mydb2 = mysql.connector.connect(
   host="172.17.0.2",
